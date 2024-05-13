@@ -23,38 +23,38 @@ Complex *create_complex(double real, double imagine){
     return complex;
 }
 
-void to_string(void *val, char **result){
+void to_string_complex(void *val, char **result){
     Complex *value = val;
     size_t size = sizeof(char) * ((size_t) ceil(log10(abs(value->real) + 1)) + (size_t) ceil(log10(abs(value->imagine) + 1)) + 12);
     *result = malloc(size);
     sprintf(*result, "%6.2lf + %.2lfi", value->real, value->imagine);
 }
 
-void sum(void *val1, void *val2, void *res){
+void sum_complex(void *val1, void *val2, void *res){
     Complex *value1 = val1, *value2 = val2, *result = res;
     result->real = value1->real + value2->real;
     result->imagine = value1->imagine + value2->imagine;
 }
 
-void sub(void *val1, void *val2, void *res){
+void sub_complex(void *val1, void *val2, void *res){
     Complex *value1 = val1, *value2 = val2, *result = res;
     result->real = value1->real - value2->real;
     result->imagine = value1->imagine - value2->imagine;
 }
 
-void multiply(void *val1, void *val2, void *res){
+void multiply_complex(void *val1, void *val2, void *res){
     Complex *value1 = val1, *value2 = val2, *result = res;
     result->real = value1->real * value2->real - value1->imagine * value2->imagine;
     result->imagine = value1->real * value2->imagine + value1->imagine * value2->real;
 }
 
-void random(void *result){
+void random_complex(void *result){
     Complex *value = result;
     value->real = (double)((rand() % 100)/10);
     value->imagine = (double)((rand() % 100)/10);
 }
 
-void scan(void *result){
+void scan_complex(void *result){
     Complex *value = result;
     scanf("%lf %lf", &value->real, &value->imagine);
 }
@@ -64,13 +64,13 @@ Field_info *fieldInfo_complex = NULL;
 Field_info *get_complex_field_info(){
     if(fieldInfo_complex == NULL){
         create_Field_info(sizeof(Complex) * 8, &fieldInfo_complex);
-        fieldInfo_complex->random = random;
-        fieldInfo_complex->scan = scan;
-        fieldInfo_complex->multiply = multiply;
-        fieldInfo_complex->sub = sub;
-        fieldInfo_complex->sum = sum;
-        fieldInfo_complex->to_string = to_string;
-        fieldInfo_complex->random = random;
+        fieldInfo_complex->random = random_complex;
+        fieldInfo_complex->scan = scan_complex;
+        fieldInfo_complex->multiply = multiply_complex;
+        fieldInfo_complex->sub = sub_complex;
+        fieldInfo_complex->sum = sum_complex;
+        fieldInfo_complex->to_string = to_string_complex;
+        fieldInfo_complex->random = random_complex;
     }
     return fieldInfo_complex;
 }

@@ -11,56 +11,56 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void to_string(void *val, char **result){
+void to_string_double(void *val, char **result){
     double value = *((double*)(val));
     size_t size = sizeof(char) * (double) log10(abs(value) + 1);
     *result = malloc(size);
-    sprintf(*result, "%d", value);
+    sprintf(*result, "%f ", value);
 }
 
-void sum(void *val1, void *val2, void *res){
+void sum_double(void *val1, void *val2, void *res){
     double *value1 = val1;
     double *value2 = val2;
     double *result = res;
     *result = *value1 + *value2;
 }
 
-void sub(void *val1, void *val2, void *res){
+void sub_double(void *val1, void *val2, void *res){
     double *value1 = val1;
     double *value2 = val2;
     double *result = res;
     *result = *value1 - *value2;
 }
 
-void multiply(void *val1, void *val2, void *res){
+void multiply_double(void *val1, void *val2, void *res){
     double *value1 = val1;
     double *value2 = val2;
     double *result = res;
     *result = *value1 * *value2;
 }
 
-void random(void *result){
+void random_double(void *result){
     double *value = result;
     *value = (rand() % 100) / 10;
 }
 
-void scan(void *result){
+void scan_double(void *result){
     double *value = result;
-    scanf("%lf", &value);
+    scanf("%lf", value);
 }
 
 Field_info *fieldInfo_double = NULL;
 
-Field_info *get_complex_field_info(){
+Field_info *get_double_field_info(){
     if(fieldInfo_double == NULL){
         create_Field_info(sizeof(double) * 8, &fieldInfo_double);
-        fieldInfo_double->random = random;
-        fieldInfo_double->scan = scan;
-        fieldInfo_double->multiply = multiply;
-        fieldInfo_double->sub = sub;
-        fieldInfo_double->sum = sum;
-        fieldInfo_double->to_string = to_string;
-        fieldInfo_double->random = random;
+        fieldInfo_double->random = random_double;
+        fieldInfo_double->scan = scan_double;
+        fieldInfo_double->multiply = multiply_double;
+        fieldInfo_double->sub = sub_double;
+        fieldInfo_double->sum = sum_double;
+        fieldInfo_double->to_string = to_string_double;
+        fieldInfo_double->random = random_double;
     }
     return fieldInfo_double;
 }
