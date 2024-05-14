@@ -5,5 +5,6 @@
 int main() {
     maintest_double();
     maintest_complex();
+    start_user_interface();
     return 0;
 }
