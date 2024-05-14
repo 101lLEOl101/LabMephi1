@@ -12,6 +12,7 @@ typedef struct {
     void (*to_string)(void*, char**);
     void (*sum)(void*, void*, void*);
     void (*sub)(void*, void*, void*);
+    void (*get_zero)(void*);
     void (*multiply)(void*, void*, void*);
     void (*random)(void*);
     void (*scan)(void*);
@@ -23,6 +24,7 @@ void create_Field_info(size_t size, Field_info **ret){
     fieldInfo->to_string = NULL;
     fieldInfo->sum=NULL;
     fieldInfo->sub=NULL;
+    fieldInfo->get_zero = NULL;
     fieldInfo->multiply=NULL;
     fieldInfo->random=NULL;
     fieldInfo->scan=NULL;

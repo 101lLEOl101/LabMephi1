@@ -32,6 +32,11 @@ void sub_double(void *val1, void *val2, void *res){
     *result = *value1 - *value2;
 }
 
+void get_zero_double(void *result){
+    double *res = result;
+    *res = 0;
+}
+
 void multiply_double(void *val1, void *val2, void *res){
     double *value1 = val1;
     double *value2 = val2;
@@ -41,7 +46,7 @@ void multiply_double(void *val1, void *val2, void *res){
 
 void random_double(void *result){
     double *value = result;
-    *value = (rand() % 100) / 10;
+    *value = (double)(rand() % 9 + 1);
 }
 
 void scan_double(void *result){
@@ -56,6 +61,7 @@ Field_info *get_double_field_info(){
         create_Field_info(sizeof(double) * 8, &fieldInfo_double);
         fieldInfo_double->random = random_double;
         fieldInfo_double->scan = scan_double;
+        fieldInfo_double->get_zero = get_zero_double;
         fieldInfo_double->multiply = multiply_double;
         fieldInfo_double->sub = sub_double;
         fieldInfo_double->sum = sum_double;

@@ -70,7 +70,7 @@ Command_array *get_start_operation_command(){
 }
 
 Command_array *get_main_operation_command(){
-    create_command_array(6, &main_operation_command);
+    create_command_array(7, &main_operation_command);
     char **commands = main_operation_command->commands;
     commands[0] = "print matrix";
     commands[1] = "fill matrix by random";
@@ -78,6 +78,7 @@ Command_array *get_main_operation_command(){
     commands[3] = "sum matrixs";
     commands[4] = "subtract matrixs";
     commands[5] = "multiply matrixs";
+    commands[6] = "multiply matrix by scalar";
     return main_operation_command;
 }
 
@@ -93,18 +94,13 @@ void free_matrix_interface(Matrix_interface *matrixInterface){
         return;
     }
     if(matrixInterface->matrix != NULL){
-        if(matrixInterface->matrix->fieldInfo != NULL){
-            free(matrixInterface->matrix->fieldInfo);
-        }
         if(matrixInterface->matrix->matrix != NULL) {
             free(matrixInterface->matrix->matrix);
         }
+        free(matrixInterface->matrix);
     }
     if(matrixInterface->name != NULL){
         free(matrixInterface->name);
-    }
-    if(matrixInterface->type != NULL){
-        free(matrixInterface->type);
     }
     free(matrixInterface);
 }
@@ -178,6 +174,7 @@ void main_operation(){
     Matrix_interface *matrixInterface1 = matrixArr->matrixs[matrix_number1], *matrixInterface2, *matrixInterfaceResult;
     size_t command_number = choose_command(get_main_operation_command());
     char *name;
+    void* scal = malloc(matrixInterface1->matrix->fieldInfo->size_of_field);
     if(command_number > 3){
         matrixInterfaceResult = malloc(sizeof(Matrix_interface));
         char *number = malloc(sizeof(char) * 3);
@@ -188,22 +185,32 @@ void main_operation(){
         number[2] = '\0';
         strcat(name, "matrix - ");
         strcat(name, number);
-        matrix_number2 = choose_matrix_from_array();
-        matrixInterface2 = matrixArr->matrixs[matrix_number2];
-        if(matrixInterface1->is_empty){
-            printf("first matrix is empty\n");
-            start_user_interface();
-            return;
+        if(command_number != 7) {
+            matrix_number2 = choose_matrix_from_array();
+            matrixInterface2 = matrixArr->matrixs[matrix_number2];
+            if (matrixInterface1->is_empty) {
+                printf("first matrix is empty\n");
+                free(number);
+                free(name);
+                start_user_interface();
+                return;
+            } else if (matrixInterface2->is_empty) {
+                printf("second matrix is empty\n");
+                free(number);
+                free(name);
+                start_user_interface();
+                return;
+            } else if (matrixInterface1->type != matrixInterface2->type) {
+                printf("Different types of matrixs\n");
+                free(number);
+                free(name);
+                start_user_interface();
+                return;
+            }
         }
-        else if(matrixInterface2->is_empty){
-            printf("second matrix is empty\n");
-            start_user_interface();
-            return;
-        }
-        else if(matrixInterface1->type != matrixInterface2->type){
-            printf("Different types of matrixs\n");
-            start_user_interface();
-            return;
+        if(command_number == 7){
+            printf("write scalar:\n");
+            matrixInterface1->matrix->fieldInfo->scan(scal);
         }
     }
     switch (command_number) {
@@ -244,6 +251,13 @@ void main_operation(){
             matrixInterfaceResult->name = name;
             add_matrix(matrixInterfaceResult);
             break;
+        case 7:
+            multiply_matrix_scal(matrixInterface1->matrix, scal, &matrixInterfaceResult->matrix);
+            matrixInterfaceResult->type = matrixInterface1->type;
+            matrixInterfaceResult->is_empty = 0;
+            matrixInterfaceResult->name = name;
+            add_matrix(matrixInterfaceResult);
+            break;
         case 0:
             break;
     }
@@ -268,6 +282,21 @@ void start_user_interface(){
             main_operation();
             break;
         case 0:
+            if(matrixArr != NULL) {
+                for (size_t i = 0; i < matrixArr->size; i++) {
+                    free_matrix_interface(matrixArr->matrixs[i]);
+                }
+                free(matrixArr);
+            }
+            if(main_operation_command != NULL) {
+                free(main_operation_command);
+            }
+            if(start_operation_command != NULL) {
+                free(start_operation_command);
+            }
+            if(type_command != NULL) {
+                free(type_command);
+            }
             exit(0);
     }
 }

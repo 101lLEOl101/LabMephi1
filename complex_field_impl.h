@@ -27,7 +27,7 @@ void to_string_complex(void *val, char **result){
     Complex *value = val;
     size_t size = sizeof(char) * ((size_t) ceil(log10(abs(value->real) + 1)) + (size_t) ceil(log10(abs(value->imagine) + 1)) + 12);
     *result = malloc(size);
-    sprintf(*result, "%6.2lf + %.2lfi", value->real, value->imagine);
+    sprintf(*result, "%6.2lf + %.2lfi ", value->real, value->imagine);
 }
 
 void sum_complex(void *val1, void *val2, void *res){
@@ -42,6 +42,12 @@ void sub_complex(void *val1, void *val2, void *res){
     result->imagine = value1->imagine - value2->imagine;
 }
 
+void get_zero_complex(void *result){
+    Complex *res = result;
+    res->imagine = 0;
+    res->real = 0;
+}
+
 void multiply_complex(void *val1, void *val2, void *res){
     Complex *value1 = val1, *value2 = val2, *result = res;
     result->real = value1->real * value2->real - value1->imagine * value2->imagine;
@@ -50,8 +56,8 @@ void multiply_complex(void *val1, void *val2, void *res){
 
 void random_complex(void *result){
     Complex *value = result;
-    value->real = (double)((rand() % 100)/10);
-    value->imagine = (double)((rand() % 100)/10);
+    value->real = (double)(rand() % 9 + 1);
+    value->imagine = (double)(rand() % 9 + 1);
 }
 
 void scan_complex(void *result){
@@ -66,6 +72,7 @@ Field_info *get_complex_field_info(){
         create_Field_info(sizeof(Complex) * 8, &fieldInfo_complex);
         fieldInfo_complex->random = random_complex;
         fieldInfo_complex->scan = scan_complex;
+        fieldInfo_complex->get_zero = get_zero_complex;
         fieldInfo_complex->multiply = multiply_complex;
         fieldInfo_complex->sub = sub_complex;
         fieldInfo_complex->sum = sum_complex;

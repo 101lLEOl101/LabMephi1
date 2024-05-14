@@ -107,26 +107,29 @@ void multiply_matrixs(Matrix *matrix1, Matrix *matrix2, Matrix **result_matrix){
     void *result_value = malloc(fieldInfo->size_of_field);
     for(size_t i = 0; i < length; i++){
         for(size_t j = 0; j < length; j++){
-            get_matrix_value(i, j, matrix1, &value1);
-            get_matrix_value(i, j, matrix2, &value2);
-            fieldInfo->multiply(value1, value2, multiply_value);
-            fieldInfo->sub(result_value, multiply_value, result_value);
+            fieldInfo->get_zero(result_value);
+            for(size_t l = 0; l < length; l++) {
+                get_matrix_value(i, l, matrix1, &value1);
+                get_matrix_value(l, j, matrix2, &value2);
+                fieldInfo->multiply(value1, value2, multiply_value);
+                fieldInfo->sum(result_value, multiply_value, result_value);
+            }
             set_matrix_value(result_value, i, j, *result_matrix);
         }
     }
 }
 
-void multiply_matrix_scal(Matrix *matrix, void *scal, Matrix **result_matrix){
+void multiply_matrix_scal(Matrix *matrix, void* scal, Matrix **result_matrix){
     size_t length = matrix->length;
     Field_info *fieldInfo = matrix->fieldInfo;
     create_matrix(length, fieldInfo, result_matrix);
     void *value = malloc(fieldInfo->size_of_field);
-    void *multiply_value = malloc(fieldInfo->size_of_field);
+    void *result_value = malloc(fieldInfo->size_of_field);
     for(size_t i = 0; i < length; i++){
         for(size_t j = 0; j < length; j++){
             get_matrix_value(i, j, matrix, &value);
-            fieldInfo->multiply(value, scal, multiply_value);
-            set_matrix_value(multiply_value, i, j, *result_matrix);
+            fieldInfo->multiply(scal, value, result_value);
+            set_matrix_value(result_value, i, j, *result_matrix);
         }
     }
 }
@@ -147,26 +150,40 @@ void fill_matrix_random(Matrix *matrix){
         fieldInfo->random(fiel);
         set_matrix_value(fiel, i, j, matrix);
     }
+    for(size_t i = 0; i < length; i++){
+        for(size_t j = 0; j < length; j++){
+            if(i != j && i - 1 != j && j - 1 != i){
+                set_matrix_value(fieldInfo->get_zero, i, j, matrix);
+            }
+        }
+    }
 }
 
 void fill_matrix_scan(Matrix *matrix){
     size_t length = matrix->length;
     Field_info *fieldInfo = matrix->fieldInfo;
     void *fiel = malloc(fieldInfo->size_of_field);
-    printf("Fill the line above the center line");
+    printf("Fill the line above the center line:\n");
     for(size_t i = 0, j = 1; i < length && j < length; i++, j++){
         fieldInfo->scan(fiel);
         set_matrix_value(fiel, i, j, matrix);
     }
-    printf("Fill the center line");
+    printf("Fill the center line:\n");
     for(size_t i = 0, j = 0; i < length && j < length; i++, j++){
         fieldInfo->scan(fiel);
         set_matrix_value(fiel, i, j, matrix);
     }
-    printf("Fill the line below the center line");
+    printf("Fill the line below the center line:\n");
     for(size_t i = 1, j = 0; i < length && j < length; i++, j++){
         fieldInfo->scan(fiel);
         set_matrix_value(fiel, i, j, matrix);
+    }
+    for(size_t i = 0; i < length; i++){
+        for(size_t j = 0; j < length; j++){
+            if(i != j && i - 1 != j && j - 1 != i){
+                set_matrix_value(fieldInfo->get_zero, i, j, matrix);
+            }
+        }
     }
 }
 
